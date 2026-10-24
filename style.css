@@ -1152,7 +1152,150 @@ tbody tr:hover {
     .features h3 {
         font-size: 11px;
     }
+/* TOMBOL AKSI DASHBOARD ADMIN */
 
+.admin-action-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    min-width: 210px;
+}
+
+.action-button {
+    border: 0;
+    border-radius: 7px;
+    padding: 8px 11px;
+    font: inherit;
+    font-size: 0.82rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.2s ease;
+}
+
+.action-button:hover {
+    opacity: 0.8;
+}
+
+.detail-button {
+    background: #e5f0eb;
+    color: #14513f;
+}
+
+.edit-button {
+    background: #fff1d6;
+    color: #80520b;
+}
+
+.delete-button {
+    background: #fde8e7;
+    color: #a32929;
+}
+
+/* DIALOG DETAIL DAN EDIT */
+
+.admin-record-dialog {
+    width: min(900px, calc(100% - 28px));
+    max-height: 88vh;
+    overflow-y: auto;
+    padding: 28px;
+    border: 1px solid #dce5dc;
+    border-radius: 18px;
+    color: #193d32;
+    background: #fff;
+}
+
+.admin-record-dialog::backdrop {
+    background: rgba(5, 35, 27, 0.65);
+    backdrop-filter: blur(3px);
+}
+
+.record-dialog-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.record-dialog-header h2 {
+    margin: 8px 0 0;
+}
+
+.record-close {
+    border: 0;
+    border-radius: 8px;
+    padding: 4px 12px;
+    background: #edf3ef;
+    color: #164b3b;
+    font-size: 1.8rem;
+    cursor: pointer;
+}
+
+.record-detail-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+}
+
+.record-detail-item {
+    min-width: 0;
+    padding: 14px;
+    border: 1px solid #e1e9e2;
+    border-radius: 10px;
+    overflow-wrap: anywhere;
+}
+
+.record-detail-item strong {
+    display: block;
+    margin-bottom: 7px;
+    font-size: 0.85rem;
+    color: #557265;
+}
+
+.record-detail-item p {
+    margin: 0;
+    white-space: pre-wrap;
+}
+
+.record-edit-form {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+}
+
+.record-edit-form .field {
+    min-width: 0;
+}
+
+.record-edit-form input,
+.record-edit-form textarea,
+.record-edit-form select {
+    box-sizing: border-box;
+    width: 100%;
+}
+
+.record-dialog-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 24px;
+}
+
+@media (max-width: 600px) {
+    .admin-record-dialog {
+        padding: 18px;
+    }
+
+    .record-detail-grid,
+    .record-edit-form {
+        grid-template-columns: 1fr;
+    }
+
+    .admin-action-buttons {
+        min-width: 0;
+    }
+}
     .features p {
         font-size: 9px;
     }
