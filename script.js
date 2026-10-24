@@ -23,23 +23,23 @@ import {
     setDoc
 } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
 
-import {
-    getStorage,
-    ref,
-    uploadBytes,
-    getDownloadURL
-} from "https://www.gstatic.com/firebasejs/12.4.0/firebase-storage.js";
-
-/* GANTI KONFIGURASI INI DENGAN KONFIGURASI FIREBASE MILIKMU */
+/* =========================================
+   1. KONFIGURASI FIREBASE
+========================================= */
 
 const firebaseConfig = {
-    apiKey: "GANTI_API_KEY",
-    authDomain: "GANTI_PROJECT_ID.firebaseapp.com",
-    projectId: "GANTI_PROJECT_ID",
-    storageBucket: "GANTI_STORAGE_BUCKET",
-    messagingSenderId: "GANTI_MESSAGING_SENDER_ID",
-    appId: "GANTI_APP_ID"
+    apiKey: "AIzaSyDNNuO654Uf846ZSGMd3WfSdHdUGOKsHcs",
+    authDomain: "psb-penerimaan-santri-baru.firebaseapp.com",
+    projectId: "psb-penerimaan-santri-baru",
+    storageBucket: "psb-penerimaan-santri-baru.firebasestorage.app",
+    messagingSenderId: "569419184425",
+    appId: "1:569419184425:web:456d6b0717c297526c1f38",
+    measurementId: "G-MMS55XSN6L"
 };
+
+/* =========================================
+   2. ELEMEN HTML
+========================================= */
 
 const $ = selector => document.querySelector(selector);
 
@@ -48,14 +48,29 @@ const submitButton = $("#submitButton");
 const formStatus = $("#formStatus");
 const yearSelect = $("#academicYear");
 const heroYear = $("#heroYear");
-const fileInput = $("#documents");
 
 let app;
 let auth;
 let db;
-let storage;
 let firebaseReady = false;
 let adminRecords = [];
+let activeAcademicYear = "2027/2028";
+
+/* =========================================
+   3. STATUS PESAN
+========================================= */
+
+function setStatus(element, message, error = false) {
+    if (!element) return;
+
+    element.textContent = message;
+    element.classList.toggle("error", error);
+    element.classList.toggle("success", !error && Boolean(message));
+}
+
+/* =========================================
+   4. TAHUN AJARAN
+========================================= */
 
 const years = [];
 
@@ -63,71 +78,72 @@ for (let year = 2026; year <= 2035; year++) {
     years.push(`${year}/${year + 1}`);
 }
 
-/* STATUS PESAN */
+function renderYears(selectedYear = activeAcademicYear) {
+    if (!yearSelect) return;
 
-function setStatus(element, message, error = false) {
-    element.textContent = message;
-    element.classList.toggle("error", error);
-    element.classList.toggle("success", !error && Boolean(message));
-}
-
-/* TAHUN AJARAN */
-
-function renderYears(selectedYear = "2027/2028") {
     yearSelect.replaceChildren();
 
     years.forEach(year => {
         const option = document.createElement("option");
+
         option.value = year;
         option.textContent = year;
+
         yearSelect.appendChild(option);
     });
 
     if (!years.includes(selectedYear)) {
         const option = document.createElement("option");
+
         option.value = selectedYear;
         option.textContent = selectedYear;
+
         yearSelect.appendChild(option);
     }
 
     yearSelect.value = selectedYear;
-    heroYear.textContent = selectedYear;
+
+    if (heroYear) {
+        heroYear.textContent = selectedYear;
+    }
 }
 
 renderYears();
-$("#currentYear").textContent = new Date().getFullYear();
 
-yearSelect.addEventListener("change", () => {
-    heroYear.textContent = yearSelect.value;
-});
-
-/* INISIALISASI FIREBASE */
-
-try {
-    const missingConfig = Object.values(firebaseConfig).some(value =>
-        String(value).startsWith("GANTI_")
-    );
-
-    if (!missingConfig) {
-        app = initializeApp(firebaseConfig);
-        auth = getAuth(app);
-        db = getFirestore(app);
-        storage = getStorage(app);
-        firebaseReady = true;
-    }
-} catch (error) {
-    console.error("Firebase gagal diinisialisasi:", error);
+if ($("#currentYear")) {
+    $("#currentYear").textContent = new Date().getFullYear();
 }
 
-if (!firebaseReady) {
+yearSelect.addEventListener("change", () => {
+    if (heroYear) {
+        heroYear.textContent = yearSelect.value;
+    }
+});
+
+/* =========================================
+   5. INISIALISASI FIREBASE
+========================================= */
+
+try {
+    app = initializeApp(firebaseConfig);
+    auth = getAuth(app);
+    db = getFirestore(app);
+
+    firebaseReady = true;
+
+} catch (error) {
+    console.error("Firebase gagal diinisialisasi:", error);
+
     setStatus(
         formStatus,
-        "Firebase belum dikonfigurasi. Isi firebaseConfig sebelum menerima pendaftaran.",
+        "Firebase gagal diinisialisasi. Periksa konfigurasi Firebase.",
         true
     );
 }
 
-/* PENGATURAN TAHUN AJARAN GLOBAL */
+/* =========================================
+   6. MEMUAT PENGATURAN TAHUN AJARAN
+========================================= */
 
 async function loadGlobalSettings() {
     if (!firebaseReady) return;
@@ -136,18 +152,23 @@ async function loadGlobalSettings() {
         const snapshot = await getDoc(doc(db, "settings", "psb"));
 
         if (snapshot.exists()) {
-            const year = snapshot.data().academicYear;
+            const data = snapshot.data();
+            const year = data.academicYear;
 
             if (/^\d{4}\/\d{4}$/.test(year || "")) {
-                renderYears(year);
+                activeAcademicYear = year;
+                renderYears(activeAcademicYear);
             }
         }
+
     } catch (error) {
         console.error("Gagal memuat tahun ajaran:", error);
     }
 }
 
-/* NOMOR REGISTRASI */
+/* =========================================
+   7. NOMOR REGISTRASI OTOMATIS
+========================================= */
 
 function makeRegistrationNumber() {
     const date = new Date();
@@ -165,10 +186,14 @@ function makeRegistrationNumber() {
     return `PSB-${dateCode}-${random}`;
 }
 
-/* DATA FORMULIR */
+/* =========================================
+   8. MENGAMBIL DATA FORMULIR
+========================================= */
 
 function getFormData() {
-    const raw = Object.fromEntries(new FormData(form).entries());
+    const raw = Object.fromEntries(
+        new FormData(form).entries()
+    );
 
     return {
         academicYear: String(raw.academicYear || ""),
@@ -189,94 +214,25 @@ function getFormData() {
     };
 }
 
-/* VALIDASI DOKUMEN */
-
-function validateFiles(files) {
-    const allowedTypes = [
-        "application/pdf",
-        "image/jpeg",
-        "image/png"
-    ];
-
-    if (files.length > 3) {
-        throw new Error("Maksimal 3 dokumen.");
-    }
-
-    for (const file of files) {
-        if (!allowedTypes.includes(file.type)) {
-            throw new Error(
-                `Format ${file.name} tidak didukung. Gunakan PDF, JPG, atau PNG.`
-            );
-        }
-
-        if (file.size > 5 * 1024 * 1024) {
-            throw new Error(`${file.name} melebihi batas 5 MB.`);
-        }
-    }
-}
-
-fileInput.addEventListener("change", () => {
-    const files = [...fileInput.files];
-
-    $("#fileSummary").textContent = files.length
-        ? `${files.length} file dipilih: ${files.map(file => file.name).join(", ")}`
-        : "Belum ada file dipilih.";
-});
-
-/* UNGGAH DOKUMEN */
-
-async function uploadDocuments(files, uid, registrationNumber) {
-    const documents = [];
-
-    for (const file of files) {
-        const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
-
-        const storageRef = ref(
-            storage,
-            `applications/${uid}/${registrationNumber}/${Date.now()}_${safeName}`
-        );
-
-        await uploadBytes(storageRef, file, {
-            contentType: file.type
-        });
-
-        const url = await getDownloadURL(storageRef);
-
-        documents.push({
-            name: file.name,
-            path: storageRef.fullPath,
-            url,
-            contentType: file.type,
-            size: file.size
-        });
-    }
-
-    return documents;
-}
-
-/* KIRIM PENDAFTARAN */
+/* =========================================
+   9. MENGIRIM PENDAFTARAN KE FIRESTORE
+========================================= */
 
 form.addEventListener("submit", async event => {
     event.preventDefault();
+
     setStatus(formStatus, "");
 
-    if (!form.reportValidity()) return;
+    if (!form.reportValidity()) {
+        return;
+    }
 
     if (!firebaseReady) {
         setStatus(
             formStatus,
-            "Pendaftaran belum dapat dikirim karena Firebase belum dikonfigurasi.",
+            "Firebase belum siap. Periksa konfigurasi terlebih dahulu.",
             true
         );
-        return;
-    }
-
-    const files = [...fileInput.files];
-
-    try {
-        validateFiles(files);
-    } catch (error) {
-        setStatus(formStatus, error.message, true);
         return;
     }
 
@@ -284,6 +240,7 @@ form.addEventListener("submit", async event => {
     submitButton.textContent = "Mengirim pendaftaran...";
 
     try {
+        // Login anonim digunakan untuk pengiriman formulir.
         if (!auth.currentUser) {
             await signInAnonymously(auth);
         }
@@ -291,31 +248,32 @@ form.addEventListener("submit", async event => {
         const user = auth.currentUser;
 
         if (!user) {
-            throw new Error("Sesi tidak tersedia. Muat ulang halaman.");
+            throw new Error(
+                "Sesi pengguna belum tersedia. Muat ulang halaman."
+            );
         }
 
         const registrationNumber = makeRegistrationNumber();
         const data = getFormData();
 
-        const documents = files.length
-            ? await uploadDocuments(files, user.uid, registrationNumber)
-            : [];
-
+        // Tidak ada unggah dokumen atau Firebase Storage.
         await addDoc(collection(db, "applications"), {
             ...data,
             registrationNumber,
-            documents,
             submittedByUid: user.uid,
             status: "Menunggu verifikasi",
             createdAt: serverTimestamp()
         });
 
+        // Tampilkan nomor registrasi.
         $("#registrationNumber").textContent = registrationNumber;
 
+        // Kosongkan formulir setelah berhasil.
         form.reset();
-        renderYears();
-        $("#fileSummary").textContent = "Belum ada file dipilih.";
 
+        renderYears(activeAcademicYear);
+
+        // Tampilkan dialog sukses.
         $("#successDialog").showModal();
 
         setStatus(
@@ -324,14 +282,23 @@ form.addEventListener("submit", async event => {
         );
 
     } catch (error) {
-        console.error(error);
+        console.error("Gagal mengirim pendaftaran:", error);
 
-        let message = "Pendaftaran gagal. Periksa koneksi internet dan konfigurasi Firebase.";
+        let message =
+            "Pendaftaran gagal. Periksa koneksi internet dan konfigurasi Firebase.";
 
-        if (error.code === "permission-denied") {
-            message = "Akses database ditolak. Periksa Firestore Rules.";
-        } else if (error.code === "storage/unauthorized") {
-            message = "Unggah dokumen ditolak. Periksa Storage Rules.";
+        if (
+            error.code === "permission-denied" ||
+            error.code === "firestore/permission-denied"
+        ) {
+            message =
+                "Akses database ditolak. Periksa Firestore Rules.";
+        } else if (error.code === "auth/operation-not-allowed") {
+            message =
+                "Login anonim belum diaktifkan di Firebase Authentication.";
+        } else if (error.code === "auth/network-request-failed") {
+            message =
+                "Koneksi internet bermasalah. Silakan coba kembali.";
         } else if (error.message) {
             message = error.message;
         }
@@ -340,18 +307,19 @@ form.addEventListener("submit", async event => {
 
     } finally {
         submitButton.disabled = false;
-        submitButton.innerHTML = "Kirim Pendaftaran →";
+        submitButton.textContent = "Kirim Pendaftaran →";
     }
 });
 
-/* TOMBOL FORMULIR */
+/* =========================================
+   10. TOMBOL FORMULIR
+========================================= */
 
 form.addEventListener("reset", () => {
     setStatus(formStatus, "");
 
     setTimeout(() => {
-        renderYears();
-        $("#fileSummary").textContent = "Belum ada file dipilih.";
+        renderYears(activeAcademicYear);
     }, 0);
 });
 
@@ -359,7 +327,9 @@ $("#closeSuccess").addEventListener("click", () => {
     $("#successDialog").close();
 });
 
-/* MENU PONSEL */
+/* =========================================
+   11. MENU NAVIGASI
+========================================= */
 
 $("#menuToggle").addEventListener("click", () => {
     $("#navigation").classList.toggle("open");
@@ -371,12 +341,21 @@ $("#navigation").querySelectorAll("a").forEach(link => {
     });
 });
 
-/* DASHBOARD ADMIN */
+/* =========================================
+   12. MEMBUKA DASHBOARD ADMIN
+========================================= */
 
 $("#openAdmin").addEventListener("click", () => {
     $("#adminPanel").hidden = false;
-    $("#adminPanel").scrollIntoView({ behavior: "smooth" });
+
+    $("#adminPanel").scrollIntoView({
+        behavior: "smooth"
+    });
 });
+
+/* =========================================
+   13. MEMERIKSA HAK AKSES ADMIN
+========================================= */
 
 async function isAdmin() {
     if (!auth.currentUser || auth.currentUser.isAnonymous) {
@@ -387,49 +366,86 @@ async function isAdmin() {
         doc(db, "admins", auth.currentUser.uid)
     );
 
-    return snapshot.exists() && snapshot.data().active === true;
+    return (
+        snapshot.exists() &&
+        snapshot.data().active === true
+    );
 }
+
+/* =========================================
+   14. LOGIN ADMIN
+========================================= */
 
 $("#adminLoginForm").addEventListener("submit", async event => {
     event.preventDefault();
 
     if (!firebaseReady) {
-        setStatus($("#adminStatus"), "Firebase belum dikonfigurasi.", true);
+        setStatus(
+            $("#adminStatus"),
+            "Firebase belum dikonfigurasi.",
+            true
+        );
         return;
     }
 
     const formData = new FormData(event.currentTarget);
-    const email = String(formData.get("email")).trim();
-    const password = String(formData.get("password"));
+
+    const email = String(formData.get("email") || "").trim();
+    const password = String(formData.get("password") || "");
 
     try {
-        await signInWithEmailAndPassword(auth, email, password);
+        await signInWithEmailAndPassword(
+            auth,
+            email,
+            password
+        );
 
-        if (!(await isAdmin())) {
+        const authorized = await isAdmin();
+
+        if (!authorized) {
             await signOut(auth);
-            throw new Error("Akun ini belum diberi izin admin.");
+
+            throw new Error(
+                "Akun ini belum memiliki izin admin."
+            );
         }
 
         $("#adminLoginBox").hidden = true;
         $("#adminDataBox").hidden = false;
 
         await loadGlobalSettings();
-        $("#adminAcademicYear").value = yearSelect.value;
+
+        $("#adminAcademicYear").value = activeAcademicYear;
 
         await loadAdminData();
 
         setStatus($("#adminStatus"), "");
 
     } catch (error) {
-        setStatus(
-            $("#adminStatus"),
-            error.message || "Login gagal. Periksa akun admin.",
-            true
-        );
+        console.error("Login admin gagal:", error);
+
+        let message = error.message || "Login admin gagal.";
+
+        if (error.code === "auth/invalid-credential") {
+            message = "Email atau kata sandi salah.";
+        } else if (error.code === "auth/too-many-requests") {
+            message =
+                "Terlalu banyak percobaan login. Coba lagi nanti.";
+        } else if (
+            error.code === "permission-denied" ||
+            error.code === "firestore/permission-denied"
+        ) {
+            message =
+                "Akses ditolak. Periksa dokumen admin dan Firestore Rules.";
+        }
+
+        setStatus($("#adminStatus"), message, true);
     }
 });
 
-/* PENGATURAN TAHUN AJARAN */
+/* =========================================
+   15. MENYIMPAN TAHUN AJARAN
+========================================= */
 
 $("#saveAcademicYear").addEventListener("click", async () => {
     const value = $("#adminAcademicYear").value.trim();
@@ -437,7 +453,7 @@ $("#saveAcademicYear").addEventListener("click", async () => {
     if (!/^\d{4}\/\d{4}$/.test(value)) {
         setStatus(
             $("#adminStatus"),
-            "Format tahun ajaran harus seperti 2027/2028.",
+            "Gunakan format tahun ajaran, misalnya 2027/2028.",
             true
         );
         return;
@@ -454,14 +470,18 @@ $("#saveAcademicYear").addEventListener("click", async () => {
             updatedBy: auth.currentUser.uid
         });
 
-        renderYears(value);
+        activeAcademicYear = value;
+
+        renderYears(activeAcademicYear);
 
         setStatus(
             $("#adminStatus"),
-            `Tahun ajaran aktif diubah menjadi ${value}.`
+            `Tahun ajaran berhasil diubah menjadi ${value}.`
         );
 
     } catch (error) {
+        console.error("Gagal menyimpan tahun ajaran:", error);
+
         setStatus(
             $("#adminStatus"),
             error.message || "Gagal menyimpan tahun ajaran.",
@@ -470,7 +490,9 @@ $("#saveAcademicYear").addEventListener("click", async () => {
     }
 });
 
-/* MUAT DATA PENDAFTAR */
+/* =========================================
+   16. MEMUAT DATA PENDAFTAR
+========================================= */
 
 async function loadAdminData() {
     if (!(await isAdmin())) {
@@ -492,8 +514,14 @@ async function loadAdminData() {
     renderAdminTable();
 }
 
+/* =========================================
+   17. MENAMPILKAN TABEL ADMIN
+========================================= */
+
 function renderAdminTable() {
-    const search = $("#adminSearch").value.toLowerCase().trim();
+    const search = $("#adminSearch").value
+        .toLowerCase()
+        .trim();
 
     const filtered = adminRecords.filter(row => {
         return [
@@ -503,11 +531,14 @@ function renderAdminTable() {
             row.level,
             row.academicYear
         ].some(value =>
-            String(value || "").toLowerCase().includes(search)
+            String(value || "")
+                .toLowerCase()
+                .includes(search)
         );
     });
 
     const body = $("#adminTableBody");
+
     body.replaceChildren();
 
     filtered.forEach(row => {
@@ -526,7 +557,9 @@ function renderAdminTable() {
             date
         ].forEach(value => {
             const td = document.createElement("td");
+
             td.textContent = value || "—";
+
             tr.appendChild(td);
         });
 
@@ -539,20 +572,41 @@ function renderAdminTable() {
 
 $("#adminSearch").addEventListener("input", renderAdminTable);
 
+/* =========================================
+   18. MUAT ULANG DATA ADMIN
+========================================= */
+
 $("#refreshAdmin").addEventListener("click", async () => {
     try {
         await loadAdminData();
-        setStatus($("#adminStatus"), "Data berhasil diperbarui.");
+
+        setStatus(
+            $("#adminStatus"),
+            "Data berhasil diperbarui."
+        );
+
     } catch (error) {
-        setStatus($("#adminStatus"), error.message, true);
+        console.error(error);
+
+        setStatus(
+            $("#adminStatus"),
+            error.message || "Gagal memuat data.",
+            true
+        );
     }
 });
 
-/* EKSPOR CSV */
+/* =========================================
+   19. EKSPOR DATA KE CSV
+========================================= */
 
 $("#exportCsv").addEventListener("click", () => {
     if (!adminRecords.length) {
-        setStatus($("#adminStatus"), "Belum ada data untuk diekspor.", true);
+        setStatus(
+            $("#adminStatus"),
+            "Belum ada data untuk diekspor.",
+            true
+        );
         return;
     }
 
@@ -576,47 +630,81 @@ $("#exportCsv").addEventListener("click", () => {
         "status"
     ];
 
-    const escapeCsv = value =>
-        `"${String(value ?? "").replace(/"/g, '""')}"`;
+    const escapeCsv = value => {
+        let text = String(value ?? "");
+
+        // Mencegah nilai teks dianggap sebagai formula spreadsheet.
+        if (/^[=+\-@\t\r]/.test(text)) {
+            text = "'" + text;
+        }
+
+        return `"${text.replace(/"/g, '""')}"`;
+    };
 
     const csv = [
-        columns.join(","),
+        columns.map(escapeCsv).join(","),
+
         ...adminRecords.map(row =>
-            columns.map(key => escapeCsv(row[key])).join(",")
+            columns
+                .map(key => escapeCsv(row[key]))
+                .join(",")
         )
     ].join("\r\n");
 
-    const blob = new Blob(["\uFEFF" + csv], {
-        type: "text/csv;charset=utf-8;"
-    });
+    const blob = new Blob(
+        ["\uFEFF" + csv],
+        { type: "text/csv;charset=utf-8;" }
+    );
 
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
 
     link.href = url;
     link.download = "data-psb-santri.csv";
+
+    document.body.appendChild(link);
     link.click();
+    link.remove();
 
     URL.revokeObjectURL(url);
 });
 
-/* LOGOUT */
+/* =========================================
+   20. LOGOUT ADMIN
+========================================= */
 
 $("#adminSignOut").addEventListener("click", async () => {
-    if (auth?.currentUser) {
-        await signOut(auth);
+    try {
+        if (auth.currentUser) {
+            await signOut(auth);
+        }
+
+        $("#adminLoginBox").hidden = false;
+        $("#adminDataBox").hidden = true;
+
+        adminRecords = [];
+
+        $("#adminTableBody").replaceChildren();
+
+        setStatus(
+            $("#adminStatus"),
+            "Berhasil keluar dari dashboard."
+        );
+
+    } catch (error) {
+        console.error("Logout gagal:", error);
+
+        setStatus(
+            $("#adminStatus"),
+            "Gagal keluar. Silakan coba kembali.",
+            true
+        );
     }
-
-    $("#adminLoginBox").hidden = false;
-    $("#adminDataBox").hidden = true;
-
-    adminRecords = [];
-    $("#adminTableBody").replaceChildren();
-
-    setStatus($("#adminStatus"), "Berhasil keluar.");
 });
 
-/* PEMERIKSAAN SESI ADMIN */
+/* =========================================
+   21. PEMERIKSAAN SESI FIREBASE
+========================================= */
 
 if (firebaseReady) {
     loadGlobalSettings();
@@ -625,6 +713,7 @@ if (firebaseReady) {
         if (!user || user.isAnonymous) {
             $("#adminLoginBox").hidden = false;
             $("#adminDataBox").hidden = true;
+
             return;
         }
 
@@ -634,15 +723,25 @@ if (firebaseReady) {
                 $("#adminDataBox").hidden = false;
 
                 await loadGlobalSettings();
-                $("#adminAcademicYear").value = yearSelect.value;
+
+                $("#adminAcademicYear").value =
+                    activeAcademicYear;
 
                 await loadAdminData();
+
             } else {
                 $("#adminLoginBox").hidden = false;
                 $("#adminDataBox").hidden = true;
             }
+
         } catch (error) {
-            console.error("Pemeriksaan admin gagal:", error);
+            console.error(
+                "Pemeriksaan sesi admin gagal:",
+                error
+            );
+
+            $("#adminLoginBox").hidden = false;
+            $("#adminDataBox").hidden = true;
         }
     });
 }
