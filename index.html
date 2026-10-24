@@ -3,369 +3,350 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="theme-color" content="#123d32">
+    <meta name="theme-color" content="#064e3b">
     <meta name="description" content="Penerimaan Santri Baru SMP dan SMA Plus Al-Falah Al-Makky">
 
-    <title>PSB | Al-Falah Al-Makky</title>
+    <title>Penerimaan Santri Baru | Al-Falah Al-Makky</title>
 
-    <link rel="icon" href="OSIS.jpg" type="image/jpeg">
+    <link rel="icon" type="image/png" href="logo-pondok.png">
     <link rel="stylesheet" href="style.css">
-
     <script type="module" src="script.js"></script>
 </head>
-<body>
 
+<body>
 <header class="header">
-    <div class="container nav-container">
+    <div class="container navbar">
         <a href="#beranda" class="brand">
-            <img src="OSIS.jpg" alt="Logo Al-Falah Al-Makky"
-                 onerror="this.style.display='none'">
+            <img src="logo-pondok.png" alt="Logo Pondok Al-Falah Al-Makky">
             <div>
                 <strong>AL-FALAH AL-MAKKY</strong>
-                <small>Penerimaan Santri Baru</small>
+                <span>SMP & SMA Plus</span>
             </div>
         </a>
 
-        <button class="menu-toggle" id="menuToggle"
-                type="button" aria-label="Buka menu">☰</button>
+        <button class="menu-toggle" id="menuToggle" type="button"
+                aria-label="Buka menu">☰</button>
 
         <nav id="navigation">
             <a href="#beranda">Beranda</a>
+            <a href="#pendaftaran">Formulir Pendaftaran</a>
             <a href="#informasi">Informasi</a>
-            <a href="#alur">Alur Pendaftaran</a>
-            <a href="#pendaftaran" class="nav-button">Daftar Sekarang</a>
-            <button type="button" id="openAdmin" class="admin-link">Admin</button>
+            <a href="#kontak">Kontak</a>
+            <button class="admin-link" id="openAdmin" type="button">
+                ♙ Login Admin
+            </button>
         </nav>
     </div>
 </header>
 
 <main>
     <section class="hero" id="beranda">
-        <div class="container hero-grid">
-            <div class="hero-text">
-                <span class="badge">PENERIMAAN SANTRI BARU</span>
+        <div class="hero-background"></div>
 
+        <div class="container hero-content">
+            <div class="hero-logo">
+                <img src="logo-pondok.png" alt="Logo Al-Falah Al-Makky">
+            </div>
+
+            <div class="hero-copy">
+                <span class="eyebrow">PENERIMAAN SANTRI BARU</span>
                 <h1>
-                    Penerimaan Santri Baru
-                    <span>PP. Al-Falah Al-Makky</span>
+                    Penerimaan<br>
+                    <span>Santri Baru</span>
                 </h1>
-
+                <h2>SMP Plus & SMA Plus Al-Falah Al-Makky</h2>
                 <p>
-                    Selamat datang di sistem pendaftaran santri baru
-                    SMP dan SMA Plus Al-Falah Al-Makky.
-                    Silakan isi formulir dengan lengkap dan benar.
+                    Bersama membangun generasi berilmu, berakhlak mulia,
+                    dan berwawasan global.
                 </p>
+                <a href="#pendaftaran" class="button button-gold">
+                    Daftar Sekarang <span>→</span>
+                </a>
+            </div>
+        </div>
 
-                <div class="hero-actions">
-                    <a href="#pendaftaran" class="button primary">
-                        Mulai Pendaftaran →
-                    </a>
-                    <a href="#informasi" class="button secondary">
-                        Informasi PSB
-                    </a>
+        <div class="hero-wave"></div>
+    </section>
+
+    <section class="main-section">
+        <div class="container main-grid">
+
+            <div class="program-column">
+                <div class="section-heading" id="informasi">
+                    <span class="ornament">✦</span>
+                    <h2>Program Pilihan</h2>
+                    <p>Pilih program yang sesuai dengan minat dan tujuan pendidikan Anda.</p>
                 </div>
 
-                <p class="academic-info">
-                    Tahun ajaran aktif:
-                    <strong id="heroYear">2027/2028</strong>
-                </p>
-            </div>
+                <div class="program-grid">
+                    <article class="program-card">
+                        <div class="program-icon">📖</div>
+                        <div class="program-content">
+                            <h3>Program Tahfidzul Qur'an</h3>
+                            <p>
+                                Program khusus untuk santri yang ingin
+                                menghafal Al-Qur'an dengan bimbingan
+                                ustaz dan ustazah.
+                            </p>
+                            <button type="button" class="button program-button"
+                                    data-program="Tahfidzul Qur'an">
+                                Pilih Program <span>→</span>
+                            </button>
+                        </div>
+                    </article>
 
-            <div class="hero-card">
-                <span class="card-label">PENDAFTARAN ONLINE</span>
-                <div class="hero-logo">AF<span>.</span></div>
-                <h2>Semangat Ngajine, Prestasi Sekolahe, Selamet Dunyo Akhirate.</h2>
-                <p>
-                    Lengkapi data calon santri dan orang tua/wali
-                    melalui formulir resmi pendaftaran.
-                </p>
-                <div class="hero-card-footer">
-                    <span>01. Data diri</span>
-                    <span>02. Data wali</span>
-                    <span>03. Pendaftaran</span>
+                    <article class="program-card">
+                        <div class="program-icon">🎓</div>
+                        <div class="program-content">
+                            <h3>Program Non-Tahfidzul Qur'an</h3>
+                            <p>
+                                Program pendidikan reguler dengan fokus
+                                pada pembelajaran umum dan pengembangan
+                                potensi diri.
+                            </p>
+                            <button type="button" class="button program-button"
+                                    data-program="Non-Tahfidzul Qur'an">
+                                Pilih Program <span>→</span>
+                            </button>
+                        </div>
+                    </article>
                 </div>
-            </div>
-        </div>
-    </section>
 
-    <section class="section" id="informasi">
-        <div class="container">
-            <div class="section-title">
-                <span class="section-label">INFORMASI</span>
-                <h2>Pendaftaran Santri Baru</h2>
-                <p>Perhatikan data dan persyaratan sebelum mengirim pendaftaran.</p>
-            </div>
+                <div class="features">
+                    <article>
+                        <span class="feature-icon">▤</span>
+                        <h3>Mudah & Cepat</h3>
+                        <p>Proses pendaftaran dapat dilakukan secara online.</p>
+                    </article>
 
-            <div class="info-grid">
-                <article class="info-card">
-                    <span class="number">01</span>
-                    <h3>Pilih Jenjang</h3>
-                    <p>Pilih SMP atau SMA sesuai jenjang pendidikan yang dituju.</p>
-                </article>
+                    <article>
+                        <span class="feature-icon">◆</span>
+                        <h3>Aman & Terpercaya</h3>
+                        <p>Data pendaftaran dikelola untuk keperluan PSB.</p>
+                    </article>
 
-                <article class="info-card">
-                    <span class="number">02</span>
-                    <h3>Lengkapi Data</h3>
-                    <p>Siapkan identitas calon santri, sekolah asal, dan data wali.</p>
-                </article>
+                    <article>
+                        <span class="feature-icon">♧</span>
+                        <h3>Pendidikan Islami</h3>
+                        <p>Mengembangkan ilmu pengetahuan dan akhlak.</p>
+                    </article>
 
-                <article class="info-card">
-                    <span class="number">03</span>
-                    <h3>Konfirmasi</h3>
-                    <p>Simpan nomor registrasi setelah pendaftaran berhasil.</p>
-                </article>
-            </div>
-        </div>
-    </section>
+                    <article>
+                        <span class="feature-icon">✦</span>
+                        <h3>Masa Depan Cerah</h3>
+                        <p>Mendukung santri untuk tumbuh dan berprestasi.</p>
+                    </article>
+                </div>
 
-    <section class="section process-section" id="alur">
-        <div class="container process-grid">
-            <div>
-                <span class="section-label">ALUR PENDAFTARAN</span>
-                <h2>Empat langkah pendaftaran</h2>
-                <p class="muted">
-                    Pastikan informasi yang diberikan sesuai dokumen resmi.
-                </p>
-            </div>
-
-            <ol class="steps">
-                <li><span>1</span><div><strong>Isi formulir</strong><p>Lengkapi semua kolom wajib.</p></div></li>
-                <li><span>2</span><div><strong>Periksa data</strong><p>Pastikan data diri dan kontak benar.</p></div></li>
-                <li><span>3</span><div><strong>Kirim formulir</strong><p>Kirim data melalui sistem online.</p></div></li>
-                <li><span>4</span><div><strong>Simpan nomor registrasi</strong><p>Gunakan nomor untuk konfirmasi ke panitia.</p></div></li>
-            </ol>
-        </div>
-    </section>
-
-    <section class="section registration-section" id="pendaftaran">
-        <div class="container registration-layout">
-            <aside class="registration-aside">
-                <span class="section-label light">FORMULIR PSB</span>
-                <h2>Daftarkan calon santri</h2>
-                <p>
-                    Isilah formulir dengan lengkap. Data akan disimpan
-                    secara online setelah Firebase dikonfigurasi.
-                </p>
-
-                <div class="privacy-note">
-                    <strong>Informasi privasi</strong>
+                <div class="information-card">
+                    <h2>Informasi Pendaftaran</h2>
                     <p>
-                        Data hanya boleh digunakan untuk keperluan
-                        penerimaan santri baru oleh panitia berwenang.
+                        Isi formulir dengan data yang benar. Setelah
+                        pendaftaran berhasil, simpan nomor registrasi
+                        untuk keperluan konfirmasi kepada panitia.
                     </p>
+                    <a href="#pendaftaran">Buka formulir pendaftaran →</a>
                 </div>
-            </aside>
+            </div>
 
-            <form id="registrationForm" class="form-card">
-                <div class="form-heading">
+            <section class="form-card" id="pendaftaran">
+                <div class="form-title">
+                    <div class="form-title-icon">▤</div>
                     <div>
-                        <span class="section-label">BAGIAN 01</span>
-                        <h2>Data Calon Santri</h2>
-                    </div>
-                    <span class="required-label">* Wajib diisi</span>
-                </div>
-
-                <div class="form-grid">
-                    <label class="field full">
-                        Tahun ajaran *
-                        <select name="academicYear" id="academicYear" required></select>
-                    </label>
-
-                    <label class="field">
-                        Jenjang pendidikan *
-                        <select name="level" required>
-                            <option value="">Pilih jenjang</option>
-                            <option value="SMP">SMP</option>
-                            <option value="SMA">SMA</option>
-                        </select>
-                    </label>
-
-                    <label class="field">
-                        Program pendidikan
-                        <select name="program">
-                            <option value="">Pilih program</option>
-                            <option value="Reguler">Reguler</option>
-                            <option value="Asrama">Program asrama</option>
-                            <option value="Belum menentukan">Belum menentukan</option>
-                        </select>
-                    </label>
-
-                    <label class="field full">
-                        Nama lengkap sesuai dokumen *
-                        <input name="fullName" maxlength="120" required>
-                    </label>
-
-                    <label class="field">
-                        Tempat lahir *
-                        <input name="birthPlace" maxlength="80" required>
-                    </label>
-
-                    <label class="field">
-                        Tanggal lahir *
-                        <input name="birthDate" type="date" required>
-                    </label>
-
-                    <label class="field">
-                        Jenis kelamin *
-                        <select name="gender" required>
-                            <option value="">Pilih</option>
-                            <option value="Laki-laki">Laki-laki</option>
-                            <option value="Perempuan">Perempuan</option>
-                        </select>
-                    </label>
-
-                    <label class="field">
-                        NISN
-                        <input name="nisn" inputmode="numeric"
-                               pattern="[0-9]{1,20}" maxlength="20"
-                               placeholder="Opsional">
-                    </label>
-
-                    <label class="field full">
-                        Alamat lengkap *
-                        <textarea name="address" rows="3"
-                                  maxlength="500" required></textarea>
-                    </label>
-
-                    <label class="field">
-                        Sekolah asal *
-                        <input name="previousSchool" maxlength="160" required>
-                    </label>
-
-                    <label class="field">
-                        Tahun lulus / kelas terakhir
-                        <input name="lastGrade" maxlength="60">
-                    </label>
-                </div>
-
-                <div class="form-heading subsection">
-                    <div>
-                        <span class="section-label">BAGIAN 02</span>
-                        <h2>Data Orang Tua / Wali</h2>
+                        <h2>Formulir Pendaftaran</h2>
+                        <p>Silakan isi data diri dengan lengkap dan benar.</p>
                     </div>
                 </div>
 
-                <div class="form-grid">
-                    <label class="field">
-                        Nama orang tua/wali *
-                        <input name="guardianName" maxlength="120" required>
+                <form id="registrationForm">
+                    <div class="form-grid">
+                        <label class="field">
+                            Nama Lengkap <span>*</span>
+                            <input type="text" name="fullName"
+                                   maxlength="120" required
+                                   placeholder="Masukkan nama lengkap">
+                        </label>
+
+                        <label class="field">
+                            Jenis Kelamin <span>*</span>
+                            <select name="gender" required>
+                                <option value="">Pilih jenis kelamin</option>
+                                <option value="Laki-laki">Laki-laki</option>
+                                <option value="Perempuan">Perempuan</option>
+                            </select>
+                        </label>
+
+                        <label class="field full">
+                            Tempat Lahir <span>*</span>
+                            <input type="text" name="birthPlace"
+                                   maxlength="80" required
+                                   placeholder="Masukkan tempat lahir">
+                        </label>
+
+                        <label class="field full">
+                            Tanggal Lahir <span>*</span>
+                            <input type="date" name="birthDate" required>
+                        </label>
+
+                        <label class="field full">
+                            Asal Sekolah <span>*</span>
+                            <input type="text" name="previousSchool"
+                                   maxlength="160" required
+                                   placeholder="Masukkan asal sekolah">
+                        </label>
+
+                        <label class="field">
+                            Jenjang Pendidikan <span>*</span>
+                            <select name="level" required>
+                                <option value="">Pilih jenjang</option>
+                                <option value="SMP">SMP</option>
+                                <option value="SMA">SMA</option>
+                            </select>
+                        </label>
+
+                        <label class="field">
+                            Nomor WhatsApp <span>*</span>
+                            <input type="tel" name="guardianPhone"
+                                   maxlength="25" required
+                                   placeholder="Contoh: 081234567890">
+                        </label>
+
+                        <label class="field full">
+                            Tahun Ajaran <span>*</span>
+                            <div class="year-row">
+                                <select name="academicYearStart"
+                                        id="academicYearStart" required>
+                                    <option value="">Tahun awal</option>
+                                </select>
+                                <span>sampai</span>
+                                <select name="academicYearEnd"
+                                        id="academicYearEnd" required>
+                                    <option value="">Tahun akhir</option>
+                                </select>
+                            </div>
+                        </label>
+
+                        <label class="field full">
+                            Program Pilihan <span>*</span>
+                            <select name="program" id="program" required>
+                                <option value="">Pilih program</option>
+                                <option value="Tahfidzul Qur'an">
+                                    Program Tahfidzul Qur'an
+                                </option>
+                                <option value="Non-Tahfidzul Qur'an">
+                                    Program Non-Tahfidzul Qur'an
+                                </option>
+                            </select>
+                        </label>
+
+                        <label class="field full">
+                            Alamat Lengkap <span>*</span>
+                            <textarea name="address" rows="3"
+                                      maxlength="500" required
+                                      placeholder="Masukkan alamat lengkap"></textarea>
+                        </label>
+
+                        <label class="field full">
+                            Nama Orang Tua / Wali <span>*</span>
+                            <input type="text" name="guardianName"
+                                   maxlength="120" required
+                                   placeholder="Masukkan nama orang tua/wali">
+                        </label>
+
+                        <label class="field full">
+                            Email Orang Tua / Wali
+                            <input type="email" name="guardianEmail"
+                                   maxlength="160"
+                                   placeholder="Opsional">
+                        </label>
+                    </div>
+
+                    <label class="consent">
+                        <input type="checkbox" name="consent" required>
+                        <span>
+                            Saya menyatakan bahwa data yang diisi benar
+                            dan menyetujui penggunaannya untuk proses
+                            penerimaan santri baru. <b>*</b>
+                        </span>
                     </label>
 
-                    <label class="field">
-                        Hubungan *
-                        <select name="guardianRelation" required>
-                            <option value="">Pilih</option>
-                            <option value="Ayah">Ayah</option>
-                            <option value="Ibu">Ibu</option>
-                            <option value="Wali">Wali</option>
-                        </select>
-                    </label>
-
-                    <label class="field">
-                        Nomor WhatsApp *
-                        <input name="guardianPhone" type="tel"
-                               maxlength="25" required
-                               placeholder="08xxxxxxxxxx">
-                    </label>
-
-                    <label class="field">
-                        Email
-                        <input name="guardianEmail" type="email" maxlength="160">
-                    </label>
-                </div>
-
-                <label class="consent">
-                    <input type="checkbox" name="consent" required>
-                    <span>
-                        Saya menyatakan data yang diisi benar dan
-                        mengizinkan panitia menggunakannya untuk proses PSB. *
-                    </span>
-                </label>
-
-                <div class="form-actions">
-                    <button type="submit" class="button primary" id="submitButton">
-                        Kirim Pendaftaran →
+                    <button type="submit" id="submitButton"
+                            class="button submit-button">
+                        <span>➤</span> Kirim Biodata
                     </button>
-                    <button type="reset" class="button reset-button">
-                        Kosongkan
-                    </button>
-                </div>
 
-                <p id="formStatus" class="status-message" role="status"></p>
-                <p class="fine-print">
-                    Jangan tutup halaman sebelum muncul konfirmasi
-                    bahwa pendaftaran berhasil.
-                </p>
-            </form>
+                    <p id="formStatus" class="status-message" role="status"></p>
+
+                    <p class="form-note">
+                        Setelah berhasil, simpan nomor registrasi yang
+                        muncul sebagai bukti pengiriman formulir.
+                    </p>
+                </form>
+            </section>
         </div>
     </section>
 
-    <section class="section admin-section" id="adminPanel" hidden>
+    <section class="admin-section" id="adminPanel" hidden>
         <div class="container">
             <div class="admin-heading">
                 <div>
-                    <span class="section-label">AREA PANITIA</span>
+                    <span class="eyebrow">AREA PANITIA</span>
                     <h2>Dashboard Admin PSB</h2>
                 </div>
-                <button type="button" id="adminSignOut" class="button reset-button">
+                <button type="button" id="adminSignOut"
+                        class="button button-light" hidden>
                     Keluar
                 </button>
             </div>
 
-            <div id="adminLoginBox" class="admin-box">
+            <div id="adminLoginBox" class="admin-login-box">
                 <h3>Login Admin</h3>
+
                 <form id="adminLoginForm">
                     <label class="field">
-                        Email admin
-                        <input type="email" name="email" required>
+                        Email Admin
+                        <input type="email" name="email" required
+                               autocomplete="username">
                     </label>
+
                     <label class="field">
-                        Kata sandi
-                        <input type="password" name="password" required>
+                        Kata Sandi
+                        <input type="password" name="password" required
+                               autocomplete="current-password">
                     </label>
-                    <button class="button primary" type="submit">Masuk</button>
+
+                    <button type="submit" class="button submit-button">
+                        Masuk Dashboard
+                    </button>
                 </form>
+
                 <p id="adminStatus" class="status-message" role="status"></p>
             </div>
 
             <div id="adminDataBox" hidden>
-                <div class="admin-year-box">
-                    <div>
-                        <strong>Tahun ajaran aktif</strong>
-                        <p>Perubahan ini menjadi tahun default untuk pengunjung.</p>
-                    </div>
-                    <label class="field">
-                        Tahun ajaran
-                        <input id="adminAcademicYear" placeholder="2027/2028"
-                               pattern="[0-9]{4}/[0-9]{4}" maxlength="9">
-                    </label>
-                    <button type="button" class="button primary" id="saveAcademicYear">
-                        Simpan Tahun
-                    </button>
-                </div>
-
                 <div class="admin-tools">
-                    <input id="adminSearch" type="search"
-                           placeholder="Cari nama atau nomor registrasi">
-                    <button id="refreshAdmin" type="button" class="button reset-button">
-                        Muat Ulang
-                    </button>
-                    <button id="exportCsv" type="button" class="button reset-button">
-                        Ekspor CSV
-                    </button>
+                    <input type="search" id="adminSearch"
+                           placeholder="Cari nama, nomor registrasi, atau sekolah">
+
+                    <button type="button" class="button button-light"
+                            id="refreshAdmin">Muat Ulang</button>
+
+                    <button type="button" class="button button-light"
+                            id="exportCsv">Ekspor CSV</button>
                 </div>
 
-                <p id="adminCount" class="muted"></p>
+                <p id="adminCount" class="admin-count"></p>
 
                 <div class="table-wrapper">
                     <table>
                         <thead>
                             <tr>
-                                <th>Registrasi</th>
+                                <th>Nomor Registrasi</th>
                                 <th>Nama</th>
                                 <th>Jenjang</th>
+                                <th>Program</th>
                                 <th>Tahun Ajaran</th>
-                                <th>WhatsApp Wali</th>
+                                <th>WhatsApp</th>
                                 <th>Tanggal</th>
                             </tr>
                         </thead>
@@ -377,26 +358,38 @@
     </section>
 </main>
 
-<footer class="footer">
-    <div class="container footer-top">
-        <strong>AL-FALAH AL-MAKKY</strong>
-        <span>Sistem Penerimaan Santri Baru</span>
-        <a href="#beranda">Kembali ke atas ↑</a>
+<footer class="footer" id="kontak">
+    <div class="container footer-main">
+        <div class="footer-brand">
+            <img src="logo-pondok.png" alt="Logo pondok">
+            <div>
+                <strong>AL-FALAH AL-MAKKY</strong>
+                <span>Penerimaan Santri Baru</span>
+            </div>
+        </div>
+
+        <p class="footer-motto">“Berilmu, Berakhlak, Berprestasi”</p>
+
+        <div class="footer-contact">
+            <strong>Informasi PSB</strong>
+            <span>Hubungi panitia resmi pondok.</span>
+        </div>
     </div>
-    <div class="container footer-bottom">
+
+    <div class="footer-bottom">
         © <span id="currentYear"></span> Al-Falah Al-Makky.
-        Informasi resmi mengikuti ketentuan sekolah.
+        Seluruh hak cipta dilindungi.
     </div>
 </footer>
 
 <dialog id="successDialog" class="success-dialog">
     <div class="success-icon">✓</div>
-    <span class="section-label">PENDAFTARAN BERHASIL</span>
-    <h2>Data berhasil dikirim</h2>
-    <p>Simpan nomor registrasi berikut untuk konfirmasi kepada panitia.</p>
+    <span class="eyebrow">PENDAFTARAN BERHASIL</span>
+    <h2>Biodata Berhasil Dikirim</h2>
+    <p>Simpan nomor registrasi ini untuk konfirmasi kepada panitia.</p>
     <div id="registrationNumber" class="registration-number"></div>
-    <button type="button" class="button primary" id="closeSuccess">
-        Saya Sudah Mencatat
+    <button type="button" id="closeSuccess" class="button submit-button">
+        Selesai
     </button>
 </dialog>
 
