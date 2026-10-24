@@ -825,24 +825,29 @@ async function deleteAdminRecord(recordId) {
     const record = getAdminRecord(recordId);
 
     if (!record) {
-        setStatus($("#adminStatus"), "Data tidak ditemukan.", true);
+        setStatus(
+            $("#adminStatus"),
+            "Data tidak ditemukan. Muat ulang daftar pendaftar.",
+            true
+        );
         return;
     }
 
     const confirmed = window.confirm(
         `Hapus pendaftaran ${record.fullName || "ini"}?\n\n` +
-        "Data yang dihapus tidak dapat dipulihkan melalui dashboard."
+        "Data yang dihapus tidak dapat dipulihkan."
     );
 
-    if (!confirmed) {
-        return;
-    }
+    if (!confirmed) return;
 
     try {
-        await deleteDoc(
-            doc(db, "applications", recordId)
-        );
+        console.log("Mencoba menghapus dokumen:", recordId);
 
+        await deleteDoc(doc(db, "applications", recordId));
+
+        console.log("Dokumen berhasil dihapus dari Firestore.");
+
+        // Muat ulang daftar data dari Firebase.
         await loadAdminData();
 
         setStatus(
@@ -854,14 +859,11 @@ async function deleteAdminRecord(recordId) {
 
         setStatus(
             $("#adminStatus"),
-            error.code === "permission-denied"
-                ? "Penghapusan ditolak oleh Firestore Rules. Periksa izin admin."
-                : "Gagal menghapus data. Periksa koneksi dan Firebase.",
+            `Gagal menghapus data: ${error.message}`,
             true
         );
     }
 }
-
 $("#closeRecordDialog").addEventListener("click", () => {
     recordDialog.close();
 });
