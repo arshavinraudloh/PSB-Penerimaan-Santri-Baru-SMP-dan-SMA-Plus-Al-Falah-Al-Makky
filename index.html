@@ -348,6 +348,7 @@
                                 <th>Tahun Ajaran</th>
                                 <th>WhatsApp</th>
                                 <th>Tanggal</th>
+                                <th>Aksi</th>
                             </tr>
                         </thead>
                         <tbody id="adminTableBody"></tbody>
@@ -356,6 +357,25 @@
             </div>
         </div>
     </section>
+    
+<dialog id="adminRecordDialog" class="admin-record-dialog">
+    <div class="record-dialog-header">
+        <div>
+            <span class="section-label">DATA PENDAFTAR</span>
+            <h2 id="recordDialogTitle">Detail Pendaftar</h2>
+        </div>
+        <button
+            type="button"
+            id="closeRecordDialog"
+            class="record-close"
+            aria-label="Tutup"
+        >×</button>
+    </div>
+
+    <div id="adminRecordContent"></div>
+
+    <div id="adminRecordActions" class="record-dialog-actions"></div>
+</dialog>  
 </main>
 
 <footer class="footer" id="kontak">
@@ -368,7 +388,7 @@
             </div>
         </div>
 
-        <p class="footer-motto">“Berilmu, Berakhlak, Berprestasi”</p>
+        <p class="footer-motto">“Semangat Ngajine, Prestasi Sekolahe, Selamet Dunyo Akhirate”</p>
 
         <div class="footer-contact">
             <strong>Informasi PSB</strong>
