@@ -137,7 +137,46 @@
                         <p>Mendukung santri untuk tumbuh dan berprestasi.</p>
                     </article>
                 </div>
+                
+<section class="status-section" id="cek-status">
+    <div class="container">
+        <div class="status-card">
+            <span class="section-label">INFORMASI PENDAFTARAN</span>
 
+            <h2>Cek Status Pendaftaran</h2>
+
+            <p>
+                Masukkan nomor registrasi untuk mengetahui
+                status penerimaan calon santri.
+            </p>
+
+            <form id="checkStatusForm">
+                <label for="checkRegistrationNumber">
+                    Nomor Registrasi
+                </label>
+
+                <input
+                    type="text"
+                    id="checkRegistrationNumber"
+                    placeholder="Contoh: PSB-20261024-24436DA8"
+                    required
+                    autocomplete="off"
+                >
+
+                <button type="submit" id="checkStatusButton">
+                    Cek Status
+                </button>
+            </form>
+
+            <div
+                id="checkStatusResult"
+                class="status-result"
+                aria-live="polite"
+                hidden
+            ></div>
+        </div>
+    </div>
+</section>      
                 <div class="information-card">
                     <h2>Informasi Pendaftaran</h2>
                     <p>
