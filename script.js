@@ -195,45 +195,42 @@ function makeRegistrationNumber() {
 }
 
 /* =====================================
-   CEK STATUS PENDAFTARAN
+   CEK STATUS PENDAFTARAN PSB
 ===================================== */
 
-const checkStatusForm = $("#checkStatusForm");
+const checkStatusForm = document.querySelector("#checkStatusForm");
 
 if (checkStatusForm) {
-    checkStatusForm.addEventListener("submit", async event => {
+    checkStatusForm.addEventListener("submit", async function (event) {
         event.preventDefault();
 
-        const input = $("#checkRegistrationNumber");
-        const result = $("#checkStatusResult");
-        const button = $("#checkStatusButton");
+        const input = document.querySelector("#checkRegistrationNumber");
+        const result = document.querySelector("#checkStatusResult");
+        const button = document.querySelector("#checkStatusButton");
 
-        const registrationNumber = String(
-            input?.value || ""
-        ).trim().toUpperCase();
+        const registrationNumber = input.value.trim().toUpperCase();
 
-        if (!registrationNumber || !result) {
+        if (!registrationNumber) {
+            result.hidden = false;
+            result.textContent = "Masukkan nomor registrasi terlebih dahulu.";
             return;
         }
 
         result.hidden = false;
         result.className = "status-result";
-        result.textContent = "Memeriksa status pendaftaran...";
+        result.textContent = "Sedang memeriksa status pendaftaran...";
 
-        if (button) {
-            button.disabled = true;
-            button.textContent = "Memeriksa...";
-        }
+        button.disabled = true;
+        button.textContent = "Memeriksa...";
 
         try {
-            const resultSnapshot = await getDoc(
-                doc(db, "publicResults", registrationNumber)
-            );
+            const resultRef = doc(db, "publicResults", registrationNumber);
+            const resultSnapshot = await getDoc(resultRef);
 
             if (!resultSnapshot.exists()) {
                 result.classList.add("result-error");
                 result.textContent =
-                    "Nomor registrasi tidak ditemukan. Periksa kembali nomor yang kamu masukkan.";
+                    "Nomor registrasi tidak ditemukan. Periksa kembali nomor registrasi kamu.";
                 return;
             }
 
@@ -247,32 +244,29 @@ if (checkStatusForm) {
             } else if (status === "Ditolak") {
                 result.classList.add("result-rejected");
                 result.textContent =
-                    "Status pendaftaran: BELUM DITERIMA. Hubungi panitia PSB untuk informasi lebih lanjut.";
+                    "Status pendaftaran: BELUM DITERIMA. Silakan hubungi panitia PSB untuk informasi lebih lanjut.";
             } else if (
                 status === "Menunggu verifikasi" ||
                 status === "Sedang diverifikasi"
             ) {
                 result.classList.add("result-pending");
                 result.textContent =
-                    "Status pendaftaran: " + status + ". Silakan periksa kembali secara berkala.";
+                    "Status pendaftaran: " + status +
+                    ". Silakan periksa kembali secara berkala.";
             } else {
                 result.classList.add("result-error");
                 result.textContent =
                     "Status belum tersedia. Silakan hubungi panitia PSB.";
             }
-
         } catch (error) {
-            console.error("Gagal memeriksa status:", error);
+            console.error("Gagal memeriksa status pendaftaran:", error);
 
             result.classList.add("result-error");
             result.textContent =
-                "Pengecekan gagal. Periksa koneksi atau konfigurasi Firebase.";
-
+                "Pengecekan gagal. Periksa koneksi internet atau konfigurasi Firebase.";
         } finally {
-            if (button) {
-                button.disabled = false;
-                button.textContent = "Cek Status";
-            }
+            button.disabled = false;
+            button.textContent = "Cek Status";
         }
     });
 }
