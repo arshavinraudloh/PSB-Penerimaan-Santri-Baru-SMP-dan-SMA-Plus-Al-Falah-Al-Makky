@@ -195,6 +195,89 @@ function makeRegistrationNumber() {
 }
 
 /* =====================================
+   CEK STATUS PENDAFTARAN
+===================================== */
+
+const checkStatusForm = $("#checkStatusForm");
+
+if (checkStatusForm) {
+    checkStatusForm.addEventListener("submit", async event => {
+        event.preventDefault();
+
+        const input = $("#checkRegistrationNumber");
+        const result = $("#checkStatusResult");
+        const button = $("#checkStatusButton");
+
+        const registrationNumber = String(
+            input?.value || ""
+        ).trim().toUpperCase();
+
+        if (!registrationNumber || !result) {
+            return;
+        }
+
+        result.hidden = false;
+        result.className = "status-result";
+        result.textContent = "Memeriksa status pendaftaran...";
+
+        if (button) {
+            button.disabled = true;
+            button.textContent = "Memeriksa...";
+        }
+
+        try {
+            const resultSnapshot = await getDoc(
+                doc(db, "publicResults", registrationNumber)
+            );
+
+            if (!resultSnapshot.exists()) {
+                result.classList.add("result-error");
+                result.textContent =
+                    "Nomor registrasi tidak ditemukan. Periksa kembali nomor yang kamu masukkan.";
+                return;
+            }
+
+            const data = resultSnapshot.data();
+            const status = String(data.status || "");
+
+            if (status === "Diterima") {
+                result.classList.add("result-success");
+                result.textContent =
+                    "SELAMAT! Kamu dinyatakan DITERIMA. Silakan ikuti informasi selanjutnya dari panitia PSB.";
+            } else if (status === "Ditolak") {
+                result.classList.add("result-rejected");
+                result.textContent =
+                    "Status pendaftaran: BELUM DITERIMA. Hubungi panitia PSB untuk informasi lebih lanjut.";
+            } else if (
+                status === "Menunggu verifikasi" ||
+                status === "Sedang diverifikasi"
+            ) {
+                result.classList.add("result-pending");
+                result.textContent =
+                    "Status pendaftaran: " + status + ". Silakan periksa kembali secara berkala.";
+            } else {
+                result.classList.add("result-error");
+                result.textContent =
+                    "Status belum tersedia. Silakan hubungi panitia PSB.";
+            }
+
+        } catch (error) {
+            console.error("Gagal memeriksa status:", error);
+
+            result.classList.add("result-error");
+            result.textContent =
+                "Pengecekan gagal. Periksa koneksi atau konfigurasi Firebase.";
+
+        } finally {
+            if (button) {
+                button.disabled = false;
+                button.textContent = "Cek Status";
+            }
+        }
+    });
+}
+
+/* =====================================
    7. MENGAMBIL DATA FORMULIR
 ===================================== */
 
@@ -788,6 +871,15 @@ async function saveAdminRecord(recordId, editForm, saveButton) {
             updates
         );
 
+await setDoc(
+    doc(db, "publicResults", record.registrationNumber),
+    {
+        registrationNumber: record.registrationNumber,
+        status: updates.status,
+        updatedAt: serverTimestamp()
+    }
+);
+        
         await loadAdminData();
 
         recordDialog.close();
@@ -843,8 +935,14 @@ async function deleteAdminRecord(recordId) {
     try {
         console.log("Mencoba menghapus dokumen:", recordId);
 
-        await deleteDoc(doc(db, "applications", recordId));
+        await deleteDoc(
+            doc(db, "applications", recordId)
+        );
 
+await deleteDoc(
+    doc(db, "publicResults", record.registrationNumber)
+);
+        
         console.log("Dokumen berhasil dihapus dari Firestore.");
 
         // Muat ulang daftar data dari Firebase.
