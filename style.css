@@ -1300,3 +1300,99 @@ tbody tr:hover {
         font-size: 9px;
     }
 }
+.status-section {
+    padding: 70px 20px;
+    background: #f0f7f1;
+}
+
+.status-card {
+    max-width: 650px;
+    margin: 0 auto;
+    padding: 35px;
+    background: #ffffff;
+    border: 1px solid #d9e8dd;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(16, 60, 50, 0.08);
+}
+
+.status-card h2 {
+    margin: 12px 0;
+    color: #103c32;
+    font-size: 30px;
+}
+
+.status-card p {
+    color: #65766e;
+    line-height: 1.7;
+}
+
+.status-card label {
+    display: block;
+    margin: 22px 0 8px;
+    font-weight: 600;
+    color: #103c32;
+}
+
+.status-card input {
+    box-sizing: border-box;
+    width: 100%;
+    padding: 14px;
+    border: 1px solid #cbdcd1;
+    border-radius: 10px;
+    font-size: 15px;
+}
+
+.status-card button {
+    width: 100%;
+    margin-top: 15px;
+    padding: 14px;
+    background: #075b43;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.status-card button:hover {
+    background: #064633;
+}
+
+.status-result {
+    margin-top: 22px;
+    padding: 18px;
+    border-radius: 10px;
+    line-height: 1.7;
+    overflow-wrap: anywhere;
+}
+
+.status-result.result-success {
+    background: #e6f6eb;
+    color: #176534;
+}
+
+.status-result.result-pending {
+    background: #fff4d9;
+    color: #795500;
+}
+
+.status-result.result-rejected {
+    background: #fdeaea;
+    color: #9c2525;
+}
+
+.status-result.result-error {
+    background: #f2f4f3;
+    color: #4c5b54;
+}
+
+@media (max-width: 600px) {
+    .status-card {
+        padding: 22px;
+    }
+
+    .status-card h2 {
+        font-size: 25px;
+    }
+}
