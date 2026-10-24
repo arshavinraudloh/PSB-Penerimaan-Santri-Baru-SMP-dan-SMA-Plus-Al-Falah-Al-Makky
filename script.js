@@ -20,7 +20,9 @@ import {
     serverTimestamp,
     doc,
     getDoc,
-    setDoc
+    setDoc,
+    updateDoc,
+    deleteDoc
 } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
 
 /* =====================================
@@ -470,22 +472,20 @@ async function loadAdminData() {
 
 function renderAdminTable() {
     const search = $("#adminSearch").value.toLowerCase().trim();
+    const body = $("#adminTableBody");
 
     const filtered = adminRecords.filter(row => {
-        const text = [
+        return [
             row.registrationNumber,
             row.fullName,
-            row.previousSchool,
             row.guardianPhone,
             row.level,
-            row.program,
             row.academicYear
-        ].join(" ").toLowerCase();
-
-        return text.includes(search);
+        ].some(value =>
+            String(value || "").toLowerCase().includes(search)
+        );
     });
 
-    const body = $("#adminTableBody");
     body.replaceChildren();
 
     filtered.forEach(row => {
@@ -499,7 +499,6 @@ function renderAdminTable() {
             row.registrationNumber,
             row.fullName,
             row.level,
-            row.program,
             row.academicYear,
             row.guardianPhone,
             date
@@ -509,13 +508,369 @@ function renderAdminTable() {
             tr.appendChild(td);
         });
 
+        // Kolom aksi
+        const actionCell = document.createElement("td");
+        const actionGroup = document.createElement("div");
+
+        actionGroup.className = "admin-action-buttons";
+
+        const detailButton = document.createElement("button");
+        detailButton.type = "button";
+        detailButton.className = "action-button detail-button";
+        detailButton.textContent = "Detail";
+
+        detailButton.addEventListener("click", () => {
+            openAdminRecord(row.id, "detail");
+        });
+
+        const editButton = document.createElement("button");
+        editButton.type = "button";
+        editButton.className = "action-button edit-button";
+        editButton.textContent = "Edit";
+
+        editButton.addEventListener("click", () => {
+            openAdminRecord(row.id, "edit");
+        });
+
+        const deleteButton = document.createElement("button");
+        deleteButton.type = "button";
+        deleteButton.className = "action-button delete-button";
+        deleteButton.textContent = "Hapus";
+
+        deleteButton.addEventListener("click", () => {
+            deleteAdminRecord(row.id);
+        });
+
+        actionGroup.append(
+            detailButton,
+            editButton,
+            deleteButton
+        );
+
+        actionCell.appendChild(actionGroup);
+        tr.appendChild(actionCell);
         body.appendChild(tr);
     });
 
     $("#adminCount").textContent =
         `${filtered.length} pendaftar ditampilkan dari ${adminRecords.length} data.`;
 }
+/* DETAIL, EDIT, DAN HAPUS PENDAFTAR */
 
+const recordDialog = $("#adminRecordDialog");
+const recordContent = $("#adminRecordContent");
+const recordTitle = $("#recordDialogTitle");
+const recordActions = $("#adminRecordActions");
+
+const editableFields = [
+    ["academicYear", "Tahun Ajaran"],
+    ["level", "Jenjang Pendidikan"],
+    ["program", "Program Pendidikan"],
+    ["fullName", "Nama Lengkap"],
+    ["birthPlace", "Tempat Lahir"],
+    ["birthDate", "Tanggal Lahir"],
+    ["gender", "Jenis Kelamin"],
+    ["nisn", "NISN"],
+    ["address", "Alamat"],
+    ["previousSchool", "Sekolah Asal"],
+    ["lastGrade", "Tahun Lulus / Kelas Terakhir"],
+    ["guardianName", "Nama Orang Tua / Wali"],
+    ["guardianRelation", "Hubungan dengan Santri"],
+    ["guardianPhone", "Nomor WhatsApp Wali"],
+    ["guardianEmail", "Email Wali"]
+];
+
+function getAdminRecord(recordId) {
+    return adminRecords.find(record => record.id === recordId);
+}
+
+function addDialogButton(text, className, handler) {
+    const button = document.createElement("button");
+
+    button.type = "button";
+    button.textContent = text;
+    button.className = className;
+    button.addEventListener("click", handler);
+
+    recordActions.appendChild(button);
+
+    return button;
+}
+
+function openAdminRecord(recordId, mode = "detail") {
+    const record = getAdminRecord(recordId);
+
+    if (!record) {
+        setStatus(
+            $("#adminStatus"),
+            "Data pendaftar tidak ditemukan. Muat ulang data.",
+            true
+        );
+        return;
+    }
+
+    recordContent.replaceChildren();
+    recordActions.replaceChildren();
+
+    if (mode === "edit") {
+        renderAdminEditForm(record);
+        return;
+    }
+
+    recordTitle.textContent = "Detail Pendaftar";
+
+    const details = document.createElement("div");
+    details.className = "record-detail-grid";
+
+    const detailFields = [
+        ["Nomor Registrasi", record.registrationNumber],
+        ...editableFields.map(([key, label]) => [label, record[key]]),
+        ["Status Pendaftaran", record.status],
+        [
+            "Tanggal Pendaftaran",
+            record.createdAt?.toDate
+                ? record.createdAt.toDate().toLocaleString("id-ID")
+                : "—"
+        ]
+    ];
+
+    detailFields.forEach(([label, value]) => {
+        const item = document.createElement("div");
+        item.className = "record-detail-item";
+
+        const heading = document.createElement("strong");
+        heading.textContent = label;
+
+        const paragraph = document.createElement("p");
+        paragraph.textContent = value || "—";
+
+        item.append(heading, paragraph);
+        details.appendChild(item);
+    });
+
+    recordContent.appendChild(details);
+
+    addDialogButton(
+        "Tutup",
+        "button reset-button",
+        () => recordDialog.close()
+    );
+
+    addDialogButton(
+        "Edit Biodata",
+        "button primary",
+        () => openAdminRecord(recordId, "edit")
+    );
+
+    recordDialog.showModal();
+}
+
+function renderAdminEditForm(record) {
+    recordTitle.textContent = "Edit Biodata Pendaftar";
+
+    const editForm = document.createElement("form");
+    editForm.id = "adminEditRecordForm";
+    editForm.className = "record-edit-form";
+
+    editableFields.forEach(([key, label]) => {
+        const fieldLabel = document.createElement("label");
+        fieldLabel.className = "field";
+
+        fieldLabel.textContent = label;
+
+        let input;
+
+        if (key === "address") {
+            input = document.createElement("textarea");
+            input.rows = 3;
+        } else {
+            input = document.createElement("input");
+
+            if (key === "birthDate") {
+                input.type = "date";
+            } else if (key === "guardianEmail") {
+                input.type = "email";
+            } else {
+                input.type = "text";
+            }
+        }
+
+        input.name = key;
+        input.value = record[key] || "";
+        input.maxLength = 500;
+
+        fieldLabel.appendChild(input);
+        editForm.appendChild(fieldLabel);
+    });
+
+    // Status pendaftaran
+    const statusLabel = document.createElement("label");
+    statusLabel.className = "field";
+    statusLabel.textContent = "Status Pendaftaran";
+
+    const statusSelect = document.createElement("select");
+    statusSelect.name = "status";
+
+    [
+        "Menunggu verifikasi",
+        "Sedang diverifikasi",
+        "Diterima",
+        "Ditolak"
+    ].forEach(status => {
+        const option = document.createElement("option");
+        option.value = status;
+        option.textContent = status;
+        statusSelect.appendChild(option);
+    });
+
+    statusSelect.value = record.status || "Menunggu verifikasi";
+    statusLabel.appendChild(statusSelect);
+    editForm.appendChild(statusLabel);
+
+    recordContent.replaceChildren(editForm);
+    recordActions.replaceChildren();
+
+    addDialogButton(
+        "Batal",
+        "button reset-button",
+        () => openAdminRecord(record.id, "detail")
+    );
+
+    const saveButton = addDialogButton(
+        "Simpan Perubahan",
+        "button primary",
+        async () => {
+            await saveAdminRecord(record.id, editForm, saveButton);
+        }
+    );
+
+    recordDialog.showModal();
+}
+
+async function saveAdminRecord(recordId, editForm, saveButton) {
+    if (!(await isAdmin())) {
+        setStatus(
+            $("#adminStatus"),
+            "Akses admin tidak valid. Silakan login kembali.",
+            true
+        );
+        return;
+    }
+
+    if (!editForm.reportValidity()) {
+        return;
+    }
+
+    const record = getAdminRecord(recordId);
+
+    if (!record) {
+        setStatus($("#adminStatus"), "Data tidak ditemukan.", true);
+        return;
+    }
+
+    const formData = new FormData(editForm);
+    const updates = {};
+
+    editableFields.forEach(([key]) => {
+        updates[key] = String(formData.get(key) || "").trim();
+    });
+
+    updates.status = String(formData.get("status") || "");
+    updates.updatedAt = serverTimestamp();
+    updates.updatedBy = auth.currentUser.uid;
+
+    saveButton.disabled = true;
+    saveButton.textContent = "Menyimpan...";
+
+    try {
+        await updateDoc(
+            doc(db, "applications", recordId),
+            updates
+        );
+
+        await loadAdminData();
+
+        recordDialog.close();
+
+        setStatus(
+            $("#adminStatus"),
+            `Data ${record.fullName || "pendaftar"} berhasil diperbarui.`
+        );
+    } catch (error) {
+        console.error("Gagal memperbarui data:", error);
+
+        setStatus(
+            $("#adminStatus"),
+            error.code === "permission-denied"
+                ? "Perubahan ditolak oleh Firestore Rules. Periksa izin admin."
+                : "Gagal menyimpan perubahan. Periksa koneksi dan Firebase.",
+            true
+        );
+    } finally {
+        saveButton.disabled = false;
+        saveButton.textContent = "Simpan Perubahan";
+    }
+}
+
+async function deleteAdminRecord(recordId) {
+    if (!(await isAdmin())) {
+        setStatus(
+            $("#adminStatus"),
+            "Akses admin tidak valid. Silakan login kembali.",
+            true
+        );
+        return;
+    }
+
+    const record = getAdminRecord(recordId);
+
+    if (!record) {
+        setStatus($("#adminStatus"), "Data tidak ditemukan.", true);
+        return;
+    }
+
+    const confirmed = window.confirm(
+        `Hapus pendaftaran ${record.fullName || "ini"}?\n\n` +
+        "Data yang dihapus tidak dapat dipulihkan melalui dashboard."
+    );
+
+    if (!confirmed) {
+        return;
+    }
+
+    try {
+        await deleteDoc(
+            doc(db, "applications", recordId)
+        );
+
+        await loadAdminData();
+
+        setStatus(
+            $("#adminStatus"),
+            "Data pendaftar berhasil dihapus."
+        );
+    } catch (error) {
+        console.error("Gagal menghapus data:", error);
+
+        setStatus(
+            $("#adminStatus"),
+            error.code === "permission-denied"
+                ? "Penghapusan ditolak oleh Firestore Rules. Periksa izin admin."
+                : "Gagal menghapus data. Periksa koneksi dan Firebase.",
+            true
+        );
+    }
+}
+
+$("#closeRecordDialog").addEventListener("click", () => {
+    recordDialog.close();
+});
+
+recordDialog.addEventListener("click", event => {
+    if (event.target === recordDialog) {
+        recordDialog.close();
+    }
+});
 $("#adminSearch").addEventListener("input", renderAdminTable);
 
 $("#refreshAdmin").addEventListener("click", async () => {
